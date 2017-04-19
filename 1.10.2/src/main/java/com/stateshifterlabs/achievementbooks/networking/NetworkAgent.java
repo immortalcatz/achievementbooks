@@ -32,15 +32,19 @@ public class NetworkAgent
 		wrapper.sendToServer(msg);
 	}
 
-	public void toggle(Book book, int id) {
+	public void toggle(String username, Book book, int id) {
 		ToggleAchievementMessage msg = new ToggleAchievementMessage();
-		msg.withData(book.itemName(), id);
+		msg.withData(username, book.itemName(), id);
 		wrapper.sendToServer(msg);
 	}
 
 	public void sendAchievementsTo(EntityPlayerMP player) {
+		sendAchievementsToFor(player, player.getName());
+	}
+
+	public void sendAchievementsToFor(EntityPlayerMP player, String playerName) {
 		CompletionDetailsMessage msg = new CompletionDetailsMessage();
-		msg.withData(storage.forPlayer(player.getName()));
+		msg.withData(storage.forPlayer(playerName));
 		wrapper.sendTo(msg, player);
 	}
 

@@ -6,4 +6,8 @@ public class CommonProxy {
 		return "";
 	}
 
+	public String getPlayerName() {
+		return "server";
+	}
+
 }

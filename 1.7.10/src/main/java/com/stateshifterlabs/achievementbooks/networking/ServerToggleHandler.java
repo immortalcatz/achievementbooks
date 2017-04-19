@@ -1,8 +1,6 @@
 package com.stateshifterlabs.achievementbooks.networking;
 
 import com.stateshifterlabs.achievementbooks.data.AchievementStorage;
-import com.stateshifterlabs.achievementbooks.facade.MCPlayer;
-import com.stateshifterlabs.achievementbooks.facade.Player;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -21,9 +19,11 @@ public class ServerToggleHandler implements IMessageHandler<ToggleAchievementMes
 	@Override
 	public IMessage onMessage(final ToggleAchievementMessage message, final MessageContext ctx)
 	{
-		Player player = new MCPlayer(ctx.getServerHandler().playerEntity);
-		storage.forPlayer(player).toggle(message.bookName(), message.achievementId());
-		networkAgent.sendAchievementsTo(ctx.getServerHandler().playerEntity);
+		storage.forPlayer(message.playerName()).toggle(message.bookName(), message.achievementId());
+		networkAgent.sendAchievementsToFor(ctx.getServerHandler().playerEntity, message.playerName());
+		if(!ctx.getServerHandler().playerEntity.getDisplayName().equalsIgnoreCase(message.playerName())) {
+			//TODO send to impersonated player if they're logged in
+		}
 		return null;
 	}
 

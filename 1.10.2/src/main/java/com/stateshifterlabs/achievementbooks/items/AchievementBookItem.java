@@ -1,7 +1,9 @@
 package com.stateshifterlabs.achievementbooks.items;
 
 
+import com.stateshifterlabs.achievementbooks.AchievementBooksMod;
 import com.stateshifterlabs.achievementbooks.client.gui.GUI;
+import com.stateshifterlabs.achievementbooks.common.NBTUtils;
 import com.stateshifterlabs.achievementbooks.data.AchievementStorage;
 import com.stateshifterlabs.achievementbooks.data.Book;
 import com.stateshifterlabs.achievementbooks.facade.MCPlayer;
@@ -14,6 +16,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
@@ -30,6 +33,7 @@ public class AchievementBookItem extends Item implements IForgeRegistryEntry<Ite
 	private AchievementStorage achievementStorage;
 	private NetworkAgent networkAgent;
 	private Sound sound;
+	private String playerName;
 
 	public AchievementBookItem(
 			Book book, AchievementStorage achievementStorage, NetworkAgent networkAgent, Sound sound
@@ -54,16 +58,36 @@ public class AchievementBookItem extends Item implements IForgeRegistryEntry<Ite
 		if (worldIn.isRemote) {
 			sound.openBook();
 			Player thePlayer = new MCPlayer(playerIn);
-			final GUI screen = new GUI(playerIn, book, achievementStorage.forPlayer(thePlayer), networkAgent, sound);
+			String playerName = getPlayer(itemStackIn, thePlayer.getDisplayName());
+			final GUI screen = new GUI(playerIn, book, achievementStorage.forPlayer(playerName), networkAgent, sound);
 			Minecraft.getMinecraft().displayGuiScreen(screen);
 		}
 
 		return new ActionResult(EnumActionResult.PASS, itemStackIn);
 	}
 
+	private String getPlayer(ItemStack par1ItemStack, String thePlayer) {
+		NBTTagCompound tag = NBTUtils.getTag(par1ItemStack);
+		if(tag.hasKey("player")) {
+			return tag.getString("player");
+		}
+
+		tag.setString("player", thePlayer);
+		par1ItemStack.setTagCompound(tag);
+		return thePlayer;
+	}
+
 	@Override
 	public String getItemStackDisplayName(ItemStack par1ItemStack) {
-		return book.name();
+		if(playerName == null) {
+			playerName = AchievementBooksMod.proxy.getPlayerName();
+		}
+		final String boundTo = getPlayer(par1ItemStack, playerName);
+		if(this.playerName.equalsIgnoreCase(boundTo)) {
+			return book.name();
+		}
+
+		return String.format("%s (%s)", book.name(), boundTo);
 	}
 
 	public void updateBook(Book book) {

@@ -54,11 +54,22 @@ public class MainCommand extends CommandBase {
 	public List<String> getTabCompletionOptions(
 			MinecraftServer server, ICommandSender sender, String[] strings, @Nullable BlockPos pos
 	) {
+
 		List<String> tabOptions = new ArrayList<String>();
 
 		if (strings.length == 1) {
 			for (CommandBase command : subCommands) {
-				tabOptions.add(command.getCommandName());
+				if(command.getCommandName().substring(0, strings[0].length()).equalsIgnoreCase(strings[0])) {
+					tabOptions.add(command.getCommandName());
+				}
+			}
+		}
+
+		if (strings.length > 1) {
+			for (CommandBase command : subCommands) {
+				if(command.getCommandName().equalsIgnoreCase(strings[0])) {
+					return command.getTabCompletionOptions(server, sender, strings, pos);
+				}
 			}
 		}
 

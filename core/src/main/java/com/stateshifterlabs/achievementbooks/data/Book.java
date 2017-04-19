@@ -95,6 +95,14 @@ public class Book {
 
 	}
 
+	public void clear() {
+		for (Page page : pages.values()) {
+			for (PageElement element : page.elements()) {
+					element.toggleState(false);
+			}
+		}
+	}
+
 	public int findIdByAchievementText(String text) throws NoSuchAchievementException {
 		for (Page page : pages.values()) {
 			for (PageElement element : page.elements()) {

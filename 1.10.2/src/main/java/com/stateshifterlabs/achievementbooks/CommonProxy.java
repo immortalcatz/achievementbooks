@@ -13,4 +13,8 @@ public class CommonProxy {
 
 	public void refreshResources() { }
 
+	public String getPlayerName() {
+		return "server";
+	}
+
 }

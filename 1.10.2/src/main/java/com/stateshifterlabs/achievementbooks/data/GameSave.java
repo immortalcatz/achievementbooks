@@ -6,6 +6,8 @@ import com.stateshifterlabs.achievementbooks.networking.NetworkAgent;
 import com.stateshifterlabs.achievementbooks.serializers.AchievementStorageSerializer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
@@ -116,6 +118,23 @@ public class GameSave {
 		EntityPlayer player = event.player;
 		if (player != null && !player.worldObj.isRemote) {
 			networkAgent.sendAchievementsTo((EntityPlayerMP) player);
+
+			int size = player.inventory.getSizeInventory();
+			for (int i = 0; i < size; i++) {
+				ItemStack stack = player.inventory.getStackInSlot(i);
+				if (stack == null) {
+					continue;
+				}
+				if (stack.getUnlocalizedName().substring(5, 21).equalsIgnoreCase("achievementbooks")) {
+					NBTTagCompound tag = stack.getTagCompound();
+					if (tag == null) {
+						continue;
+					}
+					if (tag.hasKey("player")) {
+						networkAgent.sendAchievementsToFor((EntityPlayerMP) player, tag.getString("player"));
+					}
+				}
+			}
 		}
 	}
 

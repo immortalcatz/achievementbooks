@@ -7,13 +7,15 @@ import io.netty.buffer.ByteBuf;
 public class ToggleAchievementMessageBase implements NetworkMessage {
 	private String bookName;
 	private int achievementId;
+	private String username;
 	private ByteBufferUtilities bufferUtilities;
 
 	public ToggleAchievementMessageBase(ByteBufferUtilities bufferUtilities) {
 		this.bufferUtilities = bufferUtilities;
 	}
 
-	public ToggleAchievementMessageBase withData(String bookName, int achievmenetId) {
+	public ToggleAchievementMessageBase withData(String username, String bookName, int achievmenetId) {
+		this.username = username;
 		this.bookName = bookName;
 		this.achievementId = achievmenetId;
 
@@ -23,13 +25,16 @@ public class ToggleAchievementMessageBase implements NetworkMessage {
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		achievementId = buf.readInt();
-		bookName = bufferUtilities.readUTF8String(buf);
+		String data = bufferUtilities.readUTF8String(buf);
+		String[] info = data.split(":");
+		username = info[0];
+		bookName = info[1];
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(achievementId);
-		bufferUtilities.writeUTF8String(buf, bookName);
+		bufferUtilities.writeUTF8String(buf, String.format("%s:%s", username, bookName));
 	}
 
 	public int achievementId() {
@@ -38,5 +43,9 @@ public class ToggleAchievementMessageBase implements NetworkMessage {
 
 	public String bookName() {
 		return bookName;
+	}
+
+	public String playerName() {
+		return username;
 	}
 }

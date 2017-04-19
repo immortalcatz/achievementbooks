@@ -7,8 +7,8 @@ import io.netty.buffer.ByteBuf;
 public class ToggleAchievementMessage implements IMessage {
 	private final ToggleAchievementMessageBase base = new ToggleAchievementMessageBase(new BufferUtilities());
 
-	public ToggleAchievementMessage withData(String bookName, int achievmenetId) {
-		base.withData(bookName, achievmenetId);
+	public ToggleAchievementMessage withData(String username, String bookName, int achievmenetId) {
+		base.withData(username, bookName, achievmenetId);
 		return this;
 	}
 
@@ -28,5 +28,9 @@ public class ToggleAchievementMessage implements IMessage {
 
 	public String bookName() {
 		return base.bookName();
+	}
+
+	public String playerName() {
+		return base.playerName();
 	}
 }

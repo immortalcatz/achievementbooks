@@ -46,6 +46,8 @@ public class GUI extends GuiScreen {
 		this.book = book;
 		this.networkAgent = networkAgent;
 		this.sound = sound;
+		book.clear();
+		book.loadDone(achievementData.completed(book.itemName()));
 		this.prevButtonId = getFreeId(new Integer[]{});
 		this.nextButtonId = getFreeId(new Integer[]{prevButtonId});
 		book.loadDone(achievementData.completed(book.itemName()));
@@ -188,7 +190,7 @@ public class GUI extends GuiScreen {
 		if (button.id != prevButtonId && button.id != nextButtonId) {
 			sound.toggle();
 			((AchievementLine) button).toggle();
-			networkAgent.toggle(book, button.id);
+			networkAgent.toggle(achievementData.username(), book, button.id);
 		} else if (clickDelay <= 0) {
 			if (button.id == prevButtonId) {
 				previousPage();

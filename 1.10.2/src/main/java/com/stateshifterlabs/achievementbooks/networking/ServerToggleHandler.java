@@ -22,9 +22,11 @@ public class ServerToggleHandler implements IMessageHandler<ToggleAchievementMes
 	public IMessage onMessage(final ToggleAchievementMessage message, final MessageContext ctx)
 	{
 
-		Player player = new MCPlayer(ctx.getServerHandler().playerEntity);
-		storage.forPlayer(player).toggle(message.bookName(), message.achievementId());
-		networkAgent.sendAchievementsTo(ctx.getServerHandler().playerEntity);
+		storage.forPlayer(message.playerName()).toggle(message.bookName(), message.achievementId());
+		networkAgent.sendAchievementsToFor(ctx.getServerHandler().playerEntity, message.playerName());
+		if(!ctx.getServerHandler().playerEntity.getName().equalsIgnoreCase(message.playerName())) {
+			//TODO send to impersonated player if they're logged in
+		}
 		return null;
 	}
 

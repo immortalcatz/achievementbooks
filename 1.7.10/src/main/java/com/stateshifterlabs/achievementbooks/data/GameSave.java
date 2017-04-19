@@ -11,6 +11,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
@@ -54,7 +56,7 @@ public class GameSave {
 
 		File saveFile = new File(saveDir.getAbsolutePath() + "/achievementbooks.save.json");
 
-		if(!saveFile.exists()) {
+		if (!saveFile.exists()) {
 			return;
 		}
 
@@ -92,7 +94,7 @@ public class GameSave {
 
 	@SubscribeEvent
 	public void onWorldLoad(WorldEvent.Load load) {
-		if(!load.world.isRemote) {
+		if (!load.world.isRemote) {
 			load();
 		}
 
@@ -100,7 +102,7 @@ public class GameSave {
 
 	@SubscribeEvent
 	public void onWorldSave(WorldEvent.Save save) {
-		if(!save.world.isRemote) {
+		if (!save.world.isRemote) {
 			save();
 		}
 
@@ -113,12 +115,27 @@ public class GameSave {
 	}
 
 	@SubscribeEvent
-	public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event)
-	{
+	public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		EntityPlayer player = event.player;
-		if (player != null && !player.worldObj.isRemote)
-		{
+		if (player != null && !player.worldObj.isRemote) {
 			networkAgent.sendAchievementsTo((EntityPlayerMP) player);
+
+			int size = player.inventory.getSizeInventory();
+			for (int i = 0; i < size; i++) {
+				ItemStack stack = player.inventory.getStackInSlot(i);
+				if(stack == null) {
+					continue;
+				}
+				if (stack.getUnlocalizedName().substring(5, 21).equalsIgnoreCase("achievementbooks")) {
+					NBTTagCompound tag = stack.getTagCompound();
+					if (tag == null) {
+						continue;
+					}
+					if (tag.hasKey("player")) {
+						networkAgent.sendAchievementsToFor((EntityPlayerMP) player, tag.getString("player"));
+					}
+				}
+			}
 		}
 	}
 

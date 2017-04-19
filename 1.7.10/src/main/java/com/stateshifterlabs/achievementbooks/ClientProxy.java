@@ -9,4 +9,9 @@ public class ClientProxy extends CommonProxy {
 		return Minecraft.getMinecraft().mcDataDir.getAbsolutePath();
 	}
 
+	@Override
+	public String getPlayerName() {
+		return Minecraft.getMinecraft().thePlayer.getDisplayName();
+	}
+
 }

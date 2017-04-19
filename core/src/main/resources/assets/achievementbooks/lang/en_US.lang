@@ -10,3 +10,8 @@ ab.command.list.title=Current Achievement Books
 ab.command.reload.success=Achievement Books Data reloaded. Textures may not appear correctly until a full game restart
 
 ab.command.init.success=Demo file created
+
+ab.command.bind.error.console=Binding only works for players on clients
+ab.command.bind.error.nonbook=Binding only works on books from the Achievementbooks mod
+ab.command.bind.success=Book is now bound to
+

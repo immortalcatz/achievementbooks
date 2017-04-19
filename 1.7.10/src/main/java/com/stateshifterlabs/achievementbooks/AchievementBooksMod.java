@@ -1,5 +1,6 @@
 package com.stateshifterlabs.achievementbooks;
 
+import com.stateshifterlabs.achievementbooks.commands.BindCommand;
 import com.stateshifterlabs.achievementbooks.commands.CreateDemoCommand;
 import com.stateshifterlabs.achievementbooks.commands.GiveCommand;
 import com.stateshifterlabs.achievementbooks.commands.ImportCommand;
@@ -66,6 +67,7 @@ public class AchievementBooksMod {
 
 		MainCommand mainCommand = new MainCommand();
 		mainCommand.add(new ReloadCommand(loader));
+		mainCommand.add(new BindCommand());
 		mainCommand.add(new ImportCommand(loader, networkAgent, proxy.getDataDir()));
 		mainCommand.add(new CreateDemoCommand(loader));
 		mainCommand.add(new GiveCommand(books));
